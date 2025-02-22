@@ -5,6 +5,9 @@ import java.net.InetSocketAddress;
 
 public class Main {
     public static void runServer() {
+//        MessageHandler handler = new MessageHandler(
+//            new ChatHandler() // ... add more handlers here
+//        );
         MessageHandler handler = new ChatHandler();
         WebSocketReceiver receiver = new WebSocketReceiver(new InetSocketAddress("localhost", 8080));
         WebServer server = new WebServer(handler, receiver);

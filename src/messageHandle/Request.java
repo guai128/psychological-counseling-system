@@ -21,7 +21,7 @@ public class Request {
         return requestType;
     }
 
-    public String[] getRequire_params() {
+    public String[] getRequireParams() {
         return require_params;
     }
 
