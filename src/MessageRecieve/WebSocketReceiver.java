@@ -1,5 +1,5 @@
-package messageRecieve;
-import messageHandle.MessageHandler;
+package MessageRecieve;
+import MessageHandle.MessageHandler;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;

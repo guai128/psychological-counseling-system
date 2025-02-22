@@ -1,4 +1,4 @@
-package messageHandle;
+package MessageHandle;
 
 import org.json.JSONObject;
 import java.util.HashMap;

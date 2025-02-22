@@ -1,5 +1,5 @@
-import messageHandle.MessageHandler;
-import messageRecieve.WebSocketReceiver;
+import MessageHandle.MessageHandler;
+import MessageRecieve.WebSocketReceiver;
 
 public class WebServer {
     private final MessageHandler requestHandler;

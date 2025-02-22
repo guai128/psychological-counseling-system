@@ -1,6 +1,6 @@
-import messageHandle.MessageHandler;
-import messageHandle.ChatHandler;
-import messageRecieve.WebSocketReceiver;
+import MessageHandle.MessageHandler;
+import MessageHandle.ChatProxy.ChatHandler;
+import MessageRecieve.WebSocketReceiver;
 import java.net.InetSocketAddress;
 
 public class Main {
