@@ -2,14 +2,18 @@ package MessageHandle.ChatProxy;
 
 import HttpRequestProxy.HttpProxy;
 import MessageHandle.Response;
+import jdk.jfr.Unsigned;
 import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.Map;
+import java.util.Random;
 
 public class TencentIM implements ChatProxy {
     final String DOMAIN = "console.tim.qq.com";
     final String SDK_APPID = "1600073452";
     final String ADMIN_IDENTIFIER = "administrator";
-    final String ADMIN_USERSIG = "521c7befeecab266012da8e1c6a6c2b2c8cb0d6067b1e75d86abb77be3cfb32b";
+    final String ADMIN_USERSIG = "eJwtjMsOwiAURP*FLabSFkSbuPERianGpBo3blDQXO0rgI9o-Hex7XLOzJwP2qZZ8NAGJSgKCOo1GZQuHZyhwVIVUIJ1RrrKdAOrbrKuQaEkHBBCeExZ1Db6VYPRnjPGIl*11EHxZ5ySOBxxyjsLXLx-M5-mb2xX*CSI0uvZ-ljcM3**pk*ai0MfT3ZiuLCx1MtqjL4-efM0Yw__";
     final String RANDOM = "99999999";
     final String CONTENT_TYPE = "json";
 
@@ -21,22 +25,36 @@ public class TencentIM implements ChatProxy {
 
         // make posted data
         JSONObject json = new JSONObject();
-        String res = HttpProxy.sendPost(url, json.toMap());
+        json.put("From_Account", request_json.get("From_Account"));
+        json.put("To_Account", request_json.get("To_Account"));
+        // generate unsigned int as message random
+        json.put("MsgRandom", Integer.toUnsignedLong(new Random().nextInt()));
+        Map<String, ?>[] msg_body = new Map[]{Map.of("MsgType", "TIMTextElem",
+                "MsgContent", Map.of("Text", request_json.get("Text")))};
 
+        json.put("MsgBody", msg_body);
+
+        String str_response = HttpProxy.sendPost(url, json.toMap());
         // check response and store message into database
+        JSONObject json_response = new JSONObject(str_response);
+        int error_code = json_response.getInt("ErrorCode");
+        if (error_code == 0) {
+            // store message into database
+            System.out.print("store into database");
+        } else {
+            return new Response<String>(error_code, "error", "transmit message failed").toJsonString();
+        }
 
         return new Response<String>(200, "success", "transmit message").toJsonString();
-    }
-
-    public String acknowledgeMessage(Map<String, ?> request_json) {
-        return new Response<String>(200, "success", "acknowledge message").toJsonString();
     }
 
     public String pullUnReceivedMessage(Map<String, ?> request_json) {
         return new Response<String>(200, "success", "pull unreceived message").toJsonString();
     }
 
-    public String requestMessageID(Map<String, ?> request_json) {
-        return new Response<String>(200, "success", "request message ID").toJsonString();
+    public static void main(String[] args) {
+        TencentIM tencentIM = new TencentIM();
+        Map<String, ?> request_json = Map.of("From_Account", "test1", "To_Account", "test2", "Text", "hello");
+        tencentIM.transmitMessage(request_json);
     }
 }

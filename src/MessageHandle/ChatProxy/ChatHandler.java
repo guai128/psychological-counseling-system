@@ -19,25 +19,15 @@ public class ChatHandler extends MessageHandler {
     }
 
     public String transmitMessage(Map<String, ?> request_json) {
-        chat_delegation.transmitMessage(request_json);
-        return new Response<String>(200, "success", "transmit message").toJsonString();
-    }
-
-    public String acknowledgeMessage(Map<String, ?> request_json) {
-        chat_delegation.acknowledgeMessage(request_json);
-        return new Response<String>(200, "success", "acknowledge message").toJsonString();
+        return chat_delegation.transmitMessage(request_json);
     }
 
     public String pullUnReceivedMessage(Map<String, ?> request_json) {
-        chat_delegation.pullUnReceivedMessage(request_json);
-        return new Response<String>(200, "success", "pull unreceived message").toJsonString();
+        return chat_delegation.pullUnReceivedMessage(request_json);
     }
 
-    public String requestMessageID(Map<String, ?> request_json) {
-        chat_delegation.requestMessageID(request_json);
-        return new Response<String>(200, "success", "request message ID").toJsonString();
-    }
-
+    // 该接口用于测试客户端能否连接到服务器
+    // @params: message
     public String chat(Map<String, ?> request_json) {
         String message = (String) request_json.get("message");
         return new Response<String>(200, "success", message).toJsonString();

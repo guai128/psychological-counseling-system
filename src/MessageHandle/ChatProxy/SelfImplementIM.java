@@ -8,15 +8,7 @@ public class SelfImplementIM implements ChatProxy {
         return new Response<String>(200, "success", "transmit message").toJsonString();
     }
 
-    public String acknowledgeMessage(Map<String, ?> request_json) {
-        return new Response<String>(200, "success", "acknowledge message").toJsonString();
-    }
-
     public String pullUnReceivedMessage(Map<String, ?> request_json) {
         return new Response<String>(200, "success", "pull unreceived message").toJsonString();
-    }
-
-    public String requestMessageID(Map<String, ?> request_json) {
-        return new Response<String>(200, "success", "request message ID").toJsonString();
     }
 }

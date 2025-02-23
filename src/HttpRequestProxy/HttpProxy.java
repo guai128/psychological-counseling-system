@@ -2,8 +2,8 @@ package HttpRequestProxy;
 
 import java.io.IOException;
 import java.util.Map;
+
 import org.apache.http.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -16,7 +16,7 @@ import org.json.JSONObject;
 public class HttpProxy {
     private static final CloseableHttpClient httpclient = HttpClients.createDefault();
 
-    private static String getResponse(HttpRequestBase request) {
+    private synchronized static String getResponse(HttpRequestBase request) {
         try {
             HttpResponse response = httpclient.execute(request);
             HttpEntity entity = response.getEntity();
@@ -31,36 +31,55 @@ public class HttpProxy {
     }
 
     public static String sendGet(String url) {
-        HttpGet httpget = new HttpGet(url);
+        HttpGet http_get = new HttpGet(url);
 
-        return getResponse(httpget);
+        return getResponse(http_get);
     }
 
     public static String sendGet(String url, Map<String, String> header) {
-        HttpGet httpGet = new HttpGet(url);
-        for(Map.Entry<?, ?> entry : header.entrySet()) {
-            httpGet.setHeader(entry.getKey().toString(),entry.getValue().toString());
+        HttpGet http_get = new HttpGet(url);
+        for (Map.Entry<?, ?> entry : header.entrySet()) {
+            http_get.setHeader(entry.getKey().toString(), entry.getValue().toString());
         }
 
-        return getResponse(httpGet);
+        return getResponse(http_get);
     }
-
+    
     public static String sendPost(String url, Map<String, ?> params) {
-        JSONObject jsonObject = new JSONObject();
-        for(Map.Entry<?, ?> entry:params.entrySet()){
-            jsonObject.put(entry.getKey().toString(),entry.getValue().toString());
+        JSONObject body = new JSONObject();
+        for (Map.Entry<?, ?> entry : params.entrySet()) {
+            body.put(entry.getKey().toString(), entry.getValue());
         }
-        StringEntity entity = new StringEntity(jsonObject.toString(), Consts.UTF_8);
-        HttpPost httppost = new HttpPost(url);
-        httppost.setEntity(entity);
 
-        return getResponse(httppost);
+        return sendPost(url, body);
     }
 
-    public static String sendPost(String url) {
-        HttpPost httppost = new HttpPost(url);
+    public static String sendPost(String url, Map<String, String> header, Map<String, ?> params) {
+        JSONObject body = new JSONObject();
+        for (Map.Entry<?, ?> entry : params.entrySet()) {
+            body.put(entry.getKey().toString(), entry.getValue());
+        }
 
-        return getResponse(httppost);
+        return sendPost(url, header, body);
+    }
+
+    public static String sendPost(String url, Map<String, String> header, JSONObject body) {
+        StringEntity entity = new StringEntity(body.toString(), Consts.UTF_8);
+        HttpPost http_post = new HttpPost(url);
+        http_post.setEntity(entity);
+        for (Map.Entry<?, ?> entry : header.entrySet()) {
+            http_post.setHeader(entry.getKey().toString(), entry.getValue().toString());
+        }
+
+        return getResponse(http_post);
+    }
+
+    public static String sendPost(String url, JSONObject body) {
+        StringEntity entity = new StringEntity(body.toString(), Consts.UTF_8);
+        HttpPost http_post = new HttpPost(url);
+        http_post.setEntity(entity);
+
+        return getResponse(http_post);
     }
 }
 
